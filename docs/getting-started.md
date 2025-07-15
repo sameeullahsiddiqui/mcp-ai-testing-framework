@@ -65,58 +65,10 @@ HEADLESS=true
 
 ## Your First AI Test
 
-### Simple Example
-
-Create a file called `my_first_test.py`:
-
-```python
-import asyncio
-import os
-from dotenv import load_dotenv
-from src.core.ai_agent import AITestAgent, AgentConfig, AIProvider
-from src.core.mcp_client import MCPClient
-
-load_dotenv()
-
-async def main():
-    # Configure AI
-    config = AgentConfig(
-        provider=AIProvider.OPENAI,
-        model="gpt-4-turbo",
-        api_key=os.getenv("OPENAI_API_KEY")
-    )
-    
-    # Initialize MCP client
-    mcp_client = MCPClient()
-    await mcp_client.initialize(browser_type="chromium", headless=False)
-    
-    # Create AI agent
-    agent = AITestAgent(config, mcp_client)
-    
-    try:
-        # Let AI analyze and test your application
-        print("🔍 Analyzing application...")
-        analysis = await agent.analyze_application("https://your-app.com")
-        
-        print("📋 Generating test plan...")
-        test_plan = await agent.generate_test_plan(analysis)
-        
-        print("🧪 Running tests...")
-        for test_case in test_plan.get_all_test_cases()[:3]:  # Run first 3 tests
-            result = await agent.execute_test_case(test_case)
-            print(f"✅ {test_case.name}: {result.status}")
-            
-    finally:
-        await mcp_client.cleanup()
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
 Run your test:
 
 ```bash
-python my_first_test.py
+python examples/sample_test.py
 ```
 
 ## Understanding the Output
@@ -155,50 +107,6 @@ AI-generated comprehensive testing strategy with prioritized test cases.
 
 ### 4. Self-Healing Tests
 Tests that adapt to UI changes without manual maintenance.
-
-## Common Configuration Options
-
-### Browser Settings
-```python
-# Different browser types
-await mcp_client.initialize(browser_type="firefox", headless=True)
-await mcp_client.initialize(browser_type="webkit", headless=False)
-
-# Custom viewport
-await mcp_client.page.set_viewport_size({"width": 1920, "height": 1080})
-```
-
-### AI Provider Settings
-```python
-# OpenAI Configuration
-config = AgentConfig(
-    provider=AIProvider.OPENAI,
-    model="gpt-4-turbo",
-    api_key=os.getenv("OPENAI_API_KEY"),
-    temperature=0.1,  # Lower = more deterministic
-    max_tokens=4000
-)
-
-# Anthropic Configuration
-config = AgentConfig(
-    provider=AIProvider.ANTHROPIC,
-    model="claude-3-sonnet-20240229",
-    api_key=os.getenv("ANTHROPIC_API_KEY")
-)
-```
-
-### Test Requirements
-```python
-# Customize test generation
-test_requirements = {
-    "focus_areas": ["checkout_flow", "user_authentication"],
-    "test_types": ["functional", "usability", "security"],
-    "browsers": ["chrome", "firefox", "safari"],
-    "user_scenarios": ["new_user", "returning_user", "guest_checkout"]
-}
-
-test_plan = await agent.generate_test_plan(analysis, test_requirements)
-```
 
 ## Best Practices
 
